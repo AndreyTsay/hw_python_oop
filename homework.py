@@ -1,6 +1,6 @@
 from typing import List, Dict
 from dataclasses import dataclass, asdict
-from typing import Type 
+from typing import Type
 
 
 @dataclass
@@ -122,7 +122,9 @@ class Swimming(Training):
 def read_package(workout_type: str,
                  data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    training_type: Dict [str, Type[Training]] = {'SWM': Swimming, 'RUN': Running, 'WLK': SportsWalking}
+    training_type: Dict[str, Type[Training]] = ({'SWM': Swimming,
+                                                 'RUN': Running,
+                                                 'WLK': SportsWalking})
     if workout_type in training_type:
         return (training_type[workout_type](*data))
     raise KeyError('Несуществующий тип тренировки')
