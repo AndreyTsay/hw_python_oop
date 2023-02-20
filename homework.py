@@ -1,6 +1,6 @@
 from typing import List, Dict
 from dataclasses import dataclass, asdict
-from typing import Type
+from typing import Type, Union
 
 
 @dataclass
@@ -38,11 +38,11 @@ class Training:
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-        return (self.action * self.LEN_STEP / self.M_IN_KM)
+        return self.action * self.LEN_STEP / self.M_IN_KM
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        return (self.get_distance() / self.duration)
+        return self.get_distance() / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
@@ -96,9 +96,9 @@ class SportsWalking(Training):
 
 class Swimming(Training):
     """Тренировка: плавание."""
-    LEN_STEP = 1.38
-    CAL_SIW_1 = 1.1
-    CAL_SIW_2 = 2
+    CALORIES_WEIGHT_COEFFICIENT: float = 1.38
+    CALORIES_SPEED_COEFFICIENT: float = 1.1
+    CAL_SIW_2: int = 2
 
     def __init__(self,
                  action: int,
@@ -115,24 +115,25 @@ class Swimming(Training):
                 * self.count_pool / super().M_IN_KM / self.duration)
 
     def get_spent_calories(self) -> float:
-        return ((self.get_mean_speed() + self.CAL_SIW_1)
-                * self.CAL_SIW_2 * self.weight * self.duration)
+        return ((self.get_mean_speed() + self.CALORIES_SPEED_COEFFICIENT)
+                * self.CALORIES_WEIGHT_COEFFICIENT
+                * self.weight * self.duration)
 
 
 def read_package(workout_type: str,
-                 data: List[int]) -> Training:
+                 data: List[Union[int, float]]) -> Training:
     """Прочитать данные полученные от датчиков."""
     training_type: Dict[str, Type[Training]] = ({'SWM': Swimming,
                                                  'RUN': Running,
                                                  'WLK': SportsWalking})
     if workout_type in training_type:
-        return (training_type[workout_type](*data))
+        return training_type[workout_type](*data)
     raise KeyError('Несуществующий тип тренировки')
 
 
 def main(training: Training) -> None:
     """Главная функция."""
-    info = training.show_training_info()
+    info: InfoMessage = training.show_training_info()
     print(info.get_message())
 
 
@@ -144,5 +145,5 @@ if __name__ == '__main__':
     ]
 
     for workout_type, data in packages:
-        training = read_package(workout_type, data)
+        training: Training = read_package(workout_type, data)
         main(training)
