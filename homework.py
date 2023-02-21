@@ -1,6 +1,5 @@
-from typing import List, Dict
 from dataclasses import dataclass, asdict
-from typing import Type, Union
+from typing import Type, Union, Dict, List
 
 
 @dataclass
@@ -46,7 +45,11 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError('Количество калорий не получено')
+        calories = 0
+        if calories == 0:
+            raise NotImplementedError(f'Количество калорий'
+                                      f'{calories} не получено')
+        return self.get_spent_calories()
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -96,9 +99,9 @@ class SportsWalking(Training):
 
 class Swimming(Training):
     """Тренировка: плавание."""
-    CALORIES_WEIGHT_COEFFICIENT: float = 1.38
+    LEN_STEP: float = 1.38
     CALORIES_SPEED_COEFFICIENT: float = 1.1
-    CAL_SIW_2: int = 2
+    CALORIES_WEIGHT_COEFFICIENT: int = 2
 
     def __init__(self,
                  action: int,
@@ -121,14 +124,14 @@ class Swimming(Training):
 
 
 def read_package(workout_type: str,
-                 data: List[Union[int, float]]) -> Training:
+                 data: Union[List[int], List[float]]) -> Training:
     """Прочитать данные полученные от датчиков."""
     training_type: Dict[str, Type[Training]] = ({'SWM': Swimming,
                                                  'RUN': Running,
                                                  'WLK': SportsWalking})
     if workout_type in training_type:
         return training_type[workout_type](*data)
-    raise KeyError('Несуществующий тип тренировки')
+    raise KeyError(f'Несуществующий тип тренировки {workout_type}')
 
 
 def main(training: Training) -> None:
