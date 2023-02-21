@@ -45,7 +45,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        calories: float = 0
+        calories = 0
         if calories == 0:
             raise NotImplementedError(f'Количество калорий'
                                       f'{calories} не получено')
